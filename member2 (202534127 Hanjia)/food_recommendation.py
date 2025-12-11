@@ -2,13 +2,14 @@ import os
 import csv
 from transformers import AutoTokenizer
 
-# 현재 이 .py 파일의 위치를 기준으로 경로 설정
+# 현재 파일 기준 menu_db.csv 경로 설정
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "menu_db.csv")
 
 # Huggingface tokenizer
 tokenizer = AutoTokenizer.from_pretrained("bert-base-multilingual-cased")
 
+# 메뉴 불러오기 함수
 def load_menu_csv(filepath=DB_PATH):
     menu_data = []
     with open(filepath, encoding="utf-8") as f:
@@ -44,14 +45,14 @@ def recommend_menu(keywords, menu_data):
             results.append(item)
     return results
 
-# 안내 메시지
+# 초기 안내 메시지
 def print_style_guide():
     print("\n 고를 수 있는 음식 스타일:")
     print("  - 종류: 한식, 중식, 일식, 양식")
     print("  - 온도: 따뜻한, 차가운")
     print("  - 맵기: 매콤한, 순한")
     print("  - 주재료: 밥, 면")
-    print("예시: '따뜻한 면 요리, 중식이 먹고 싶어'")
+    print("예시: '따뜻한 면 요리 중식 먹고 싶어'")
     print("종료하려면 '종료'를 입력하세요.\n")
 
 # 메인 실행
@@ -67,13 +68,12 @@ def main():
             print("시스템을 종료합니다. 안녕히 가세요!")
             break
 
-        # Huggingface tokenizer 형식적 사용
         tokens = tokenizer.tokenize(user_input)
         print("입력 토큰:", tokens)
 
         keywords = extract_keywords(user_input)
         if not keywords:
-            print("입력에서 인식된 키워드가 없습니다. 다시 시도해 주세요.")
+            print("⚠️ 입력에서 인식된 키워드가 없습니다. 다시 시도해 주세요.")
             continue
 
         matched = recommend_menu(keywords, menu_data)
@@ -82,11 +82,7 @@ def main():
             for item in matched:
                 print(f"  - {item['name']} ({item['type']} / {item['temp']} / {item['spicy']} / {item['main']})")
         else:
-            print("조건에 맞는 메뉴를 찾을 수 없습니다. 😢")
+            print("조건에 맞는 메뉴를 찾을 수 없습니다.😢 ")
 
-        print("\n" + "-"*50)
-        print_style_guide()
-
-# 실행
-if __name__ == "__main__":
+if __name__ =="__main__":
     main()
